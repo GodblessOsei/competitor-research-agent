@@ -3,10 +3,6 @@
   "outputDirectory": "client/dist",
   "rewrites": [
     {
-      "source": "/api/research",
-      "destination": "/server/api/research.js"
-    },
-    {
       "source": "/((?!api).*)",
       "destination": "/index.html"
     }
