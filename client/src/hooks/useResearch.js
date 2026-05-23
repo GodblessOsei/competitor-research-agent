@@ -15,7 +15,7 @@ export function useResearch() {
   const [data, setData] = useState(null)
   const [error, setError] = useState(null)
 
-  const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+  const BASE_URL = import.meta.env.PROD ? '' : 'http://localhost:3001'
 
   async function runResearch(competitor, industry, focuses) {
     setStatus('loading')
