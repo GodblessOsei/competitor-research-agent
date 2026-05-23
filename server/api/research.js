@@ -1,8 +1,4 @@
-const express = require('express')
 const axios = require('axios')
-require('dotenv').config()
-
-const router = express.Router() // route for request to api/research
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY
 
@@ -27,7 +23,6 @@ async function callOpenRouter(systemPrompt, userPrompt) {
 }
 
 async function runResearchAgent(competitor, industry, focuses) {
-  // Step 1: Research
   const researchResult = await callOpenRouter(
     `You are a competitive intelligence analyst specialising in ${industry}. 
      Be specific and factual. Never make up statistics.`,
@@ -36,7 +31,6 @@ async function runResearchAgent(competitor, industry, focuses) {
      Write a structured research brief — 3 to 5 paragraphs.`
   )
 
-  // Step 2: Extract and structure into JSON
   const structuredResult = await callOpenRouter(
     `You are a data extraction assistant. 
      You always respond with valid JSON only. 
@@ -75,7 +69,19 @@ async function runResearchAgent(competitor, industry, focuses) {
   return { raw: researchResult, structured: structuredResult }
 }
 
-router.post('/', async (req, res) => {
+module.exports = async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end()
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' })
+  }
+
   const { competitor, industry, focuses } = req.body
 
   if (!competitor || !industry || !focuses) {
@@ -97,11 +103,9 @@ router.post('/', async (req, res) => {
       }
     }
 
-    res.json({ success: true, data: parsed, raw: result.raw })
+    res.status(200).json({ success: true, data: parsed, raw: result.raw })
   } catch (error) {
     console.error('Agent error:', error.message)
     res.status(500).json({ error: 'Agent failed', detail: error.message })
   }
-})
-
-module.exports = router
+}
