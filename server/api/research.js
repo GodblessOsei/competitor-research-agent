@@ -34,6 +34,7 @@ async function callOpenRouter(systemPrompt, userPrompt, modelIndex = 0) {
             console.log(`Model ${model} rate limited, trying fallback...`)
             return callOpenRouter(systemPrompt, userPrompt, modelIndex + 1)
         }
+        console.log('OpenRouter error:', err.response?.status, err.response?.data)
         throw err
     }
 }
@@ -86,6 +87,7 @@ async function runResearchAgent(competitor, industry, focuses) {
 }
 
 module.exports = async function handler(req, res) {
+  console.log('Handler triggered, method:', req.method)
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
