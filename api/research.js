@@ -31,6 +31,9 @@ async function runResearchAgent(competitor, industry, focuses) {
      Write a structured research brief — 3 to 5 paragraphs.`
   )
 
+  // Wait 3 seconds between calls to avoid rate limiting
+  await new Promise(resolve => setTimeout(resolve, 5000))
+
   const structuredResult = await callOpenRouter(
     `You are a data extraction assistant. 
      You always respond with valid JSON only. 
