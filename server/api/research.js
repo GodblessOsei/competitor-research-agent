@@ -2,24 +2,40 @@ const axios = require('axios')
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY
 
-async function callOpenRouter(systemPrompt, userPrompt) {
-  const response = await axios.post(
-    'https://openrouter.ai/api/v1/chat/completions',
-    {
-      model: 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt }
-      ]
-    },
-    {
-      headers: {
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-        'Content-Type': 'application/json'
-      }
+async function callOpenRouter(systemPrompt, userPrompt, modelIndex = 0) {
+    const models = [
+        'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+        'meta-llama/llama-3.3-70b-instruct:free',
+        'google/gemma-4-26b-a4b-it:free'
+    ]
+
+    const model = models[modelIndex]
+
+    try {
+        const response = await axios.post(
+            'https://openrouter.ai/api/v1/chat/completions',
+            {
+                model,
+                messages: [
+                    {role: 'system', content: systemPrompt},
+                    {role: 'user', content: userPrompt}
+                ]
+            },
+            {
+                headers: {
+                    'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        )
+        return response.data.choices[0].message.content
+    } catch (err) {
+        if (err.response?.status === 429 && modelIndex < models.length - 1) {
+            console.log(`Model ${model} rate limited, trying fallback...`)
+            return callOpenRouter(systemPrompt, userPrompt, modelIndex + 1)
+        }
+        throw err
     }
-  )
-  return response.data.choices[0].message.content
 }
 
 async function runResearchAgent(competitor, industry, focuses) {
