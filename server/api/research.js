@@ -6,7 +6,7 @@ async function callOpenRouter(systemPrompt, userPrompt) {
   const response = await axios.post(
     'https://openrouter.ai/api/v1/chat/completions',
     {
-      model: 'arcee-ai/trinity-mini:free',
+      model: 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
