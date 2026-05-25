@@ -14,7 +14,8 @@ export default function App() {
         <div style={styles.header}>
           <h1 style={styles.title}>Competitor Research Agent</h1>
           <p style={styles.sub}>
-            Multi-step AI pipeline — research, extract, analyse, report
+            Multi-step AI pipeline which analyses your competitors and delivers
+            a structured intelligence report covering pricing, features, positioning, and market threats.
           </p>
         </div>
 
